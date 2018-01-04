@@ -20,7 +20,7 @@
     "url": "https://github.com/wildcors/chatapp/issues"
   },
   "homepage": "https://github.com/wildcors/chatapp#readme",
-  "devDependencies": {
+  "dependencies": {
     "express": "^4.16.2"
   }
 }
