@@ -17,17 +17,15 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('new user connected')
 
-    socket.on('disconnect', () => {
-        console.log('user was disconnected')
-    });
-
-    socket.emit('newMessage', generateMessage('Obi', 'Hello'));
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome'));
 
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-    socket.on('createMessage', (message) => {
-        io.emit('newMessage', generateMessage(message.from, message.text))
-    });
+    socket.on('createMessage', (message, callback) => {
+        console.log('createMessage', message);
+        io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('This is from the server.');
+      });
 });
 
 server.listen(port, () => {
