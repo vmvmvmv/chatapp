@@ -23,6 +23,7 @@
   "homepage": "https://github.com/wildcors/chatapp#readme",
   "dependencies": {
     "express": "^4.16.2",
+    "moment": "^2.20.1",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
