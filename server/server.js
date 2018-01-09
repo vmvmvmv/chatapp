@@ -1,5 +1,6 @@
 const path = require('path');
 const http = require('http');
+const url = require('url');
 const express = require('express');
 const socketIO = require('socket.io');
 
@@ -18,11 +19,14 @@ let users = new Users();
 app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
-
     socket.on('join', (params, cb) => {
-        if(isRealString(params.name) === null || !isRealString(params.room) === null) cb();
-        else if (!isRealString(params.name) || !isRealString(params.room)) cb('Name and room name are required.');
+        let dublicatedNames = users.users.filter((user) => user.name === params.name);
 
+        if (isRealString(params.name) === null || !isRealString(params.room) === null) return;
+        else if (!isRealString(params.name) || !isRealString(params.room)) cb('Name and room name are required.');
+        // else if (dublicatedNames.length) {
+        //     url.resolve('', '/')
+        // }
         socket.join(params.room);
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
@@ -60,5 +64,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-    console.log(`Server started on port:${port}`)
+    console.log(`Server started on port:${port}`);
 });

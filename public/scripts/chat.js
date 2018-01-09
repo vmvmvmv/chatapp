@@ -13,6 +13,7 @@ $.urlParam = function(name){
 socket.on('connect', function () {
     var userName = $.urlParam('name'),
         roomName = $.urlParam('room');
+        
     socket.emit('join', {name: userName, room: roomName}, function(error) {
         if (error) {
             alert(error);
@@ -79,6 +80,10 @@ locationBtn.on('click', function () {
         alert('Unable to fetch location');
     })
 });
+
+$('[name=message]').keypress((function() {
+    console.log(socket, userName)
+}))
 
 function scrollToBottom() {
     var messages = $('#messages'),
