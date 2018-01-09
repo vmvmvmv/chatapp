@@ -27,13 +27,20 @@ socket.on('disconnect', function () {
     console.log('Disconnected from server');
 });
 
+socket.on('updateUserList', function(users) {
+    let ol = $('<ol></ol>');
+    users.forEach(function(user) {
+        ol.append($('<li></li>').text(user));
+    });
+
+    $('#users').html(ol)
+});
+
 socket.on('newMessage', function (message) {
-    console.log('newMessage', message);
     var li = $('<li></li>');
     li.text(`${message.from} ${message.createAt} : ${message.text}`)
 
     $('#messages').append(li);
-
     scrollToBottom();
 });
 
@@ -52,7 +59,6 @@ $('#message-form').on('submit', function (e) {
     e.preventDefault();
 
     socket.emit('createMessage', {
-        from: 'User',
         text: $('[name=message]').val()
     }, function () {
         $('[name=message]').val('');
