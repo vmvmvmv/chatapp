@@ -16,17 +16,27 @@ let server = http.createServer(app);
 let io = socketIO(server);
 let users = new Users();
 
-app.use(express.static(publicPath));
+
+app.use("/css",  express.static(publicPath + '/css'));
+app.use("/scripts", express.static(publicPath + '/scripts'));
+
+app.get('/', function(req,res) {
+    res.sendFile(publicPath + '/index.html');
+});
+
+app.get('/chat', function(req, res) {
+    res.sendFile(publicPath + '/chat.html');
+});
 
 io.on('connection', (socket) => {
-    socket.on('join', (params, cb) => {
-        let dublicatedNames = users.users.filter((user) => user.name === params.name);
+    socket.emit('getRoomsList', users.users)
+    socket.on('join', (params, callback) => {
+        let usersNames = users.getUserList(params.room);
 
         if (isRealString(params.name) === null || !isRealString(params.room) === null) return;
-        else if (!isRealString(params.name) || !isRealString(params.room)) cb('Name and room name are required.');
-        // else if (dublicatedNames.length) {
-        //     url.resolve('', '/')
-        // }
+        else if (!isRealString(params.name) || !isRealString(params.room)) return callback('Name and room name are required');
+        else if (usersNames.indexOf(params.name) > -1) return callback('The name is already used');
+
         socket.join(params.room);
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
@@ -34,14 +44,15 @@ io.on('connection', (socket) => {
         io.to(params.room).emit('updateUserList', users.getUserList(params.room));
         socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat'));
         socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
-        cb();
+        callback();
     });
 
-    socket.on('createMessage', (message, cb) => {
+    socket.on('createMessage', (message, callback) => {
         let user = users.getUser(socket.id);
 
         if(user && isRealString(message.text)) {
             io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+            callback();
         }
     });
 
@@ -50,6 +61,14 @@ io.on('connection', (socket) => {
 
         if(user) {
             io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lng));
+        }
+    });
+
+    socket.on('typing', (text) => {
+        let user = users.getUser(socket.id);
+
+        if(text) {
+            io.to(user.room).emit('showTyping', {user, text})
         }
     });
 

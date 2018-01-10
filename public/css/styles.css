@@ -138,7 +138,8 @@ button:disabled {
 
 .chat__footer {
     display: flex;
-    flex-shrink: 0
+    flex-shrink: 0;
+    position: relative;
 }
 
 .chat__footer form {
@@ -174,11 +175,31 @@ button:disabled {
     color: #999
 }
 
-.is-tiping {
+#typing {
+    font-size: 16px;
     position: absolute;
     top: -20px;
-    color: #999;
+    color: #000;
     right: 30px;
+    display: none;
+    transition: all 333ms;
+}
+
+.user-name {
+    padding-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.msg {
+    background-color: aquamarine;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.msg.location {
+    background-color: aliceblue;
 }
 
 @media (max-width:600px) {
