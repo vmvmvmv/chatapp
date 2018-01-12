@@ -17,15 +17,14 @@ let io = socketIO(server);
 let users = new Users();
 
 
-app.use("/css",  express.static(publicPath + '/css'));
+app.use("/assets/styles",  express.static(publicPath + '/assets/styles'));
 app.use("/scripts", express.static(publicPath + '/scripts'));
 
-app.get('/', function(req,res) {
-    res.sendFile(publicPath + '/index.html');
-});
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
-app.get('/chat', function(req, res) {
-    res.sendFile(publicPath + '/chat.html');
+app.get('*', function(req, res) {
+    res.render(publicPath + '/index')
 });
 
 io.on('connection', (socket) => {
