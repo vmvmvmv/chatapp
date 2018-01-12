@@ -54,7 +54,7 @@ const Config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'vk-services',
+            title: 'chatapp',
             template: './app/index.html',
             minify: {
                 removeComments: true
