@@ -1,13 +1,51 @@
 import React from 'react'
-import InputField from './InputField'
+import { connect } from 'react-redux'
+import moment from 'moment'
 
-export default class Chat extends React.Component {
-    constructor() {
-        super()
+import InputField from './InputField'
+import { mapStateToProps } from '../utils'
+import { addMessage } from '../actions'
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addMsg: (msg) => dispatch(addMessage(msg))
+    }
+};
+
+const MessageHistory = (props) => {
+    return (
+        <ol id="messages" className="chat__messages">
+            {
+                props.data.map((item, index) => {
+                    return (
+                        <div className="msg" key={index}>
+                            <div className="user-name">{item.from} {item.createdAt}</div>
+                            <div>{item.text}</div>
+                        </div>
+                    )
+                })
+            }
+        </ol>
+    )
+};
+
+class Chat extends React.Component {
+    constructor(props) {
+        super(props)
+        if(!this.props.state.userName) return window.location.href = '/';
+
+        this.sendMessage = this.sendMessage.bind(this);
     }
 
     componentDidMount() {
-        this.msgInput.focus()
+        this.msgInput.focus();
+    }
+
+    sendMessage(e) {
+        e.preventDefault();
+        if(!this.msgInput.value) return;
+        this.props.addMsg({text: this.msgInput.value, at: moment().format('kk:mm:ss')})
+        this.msgInput.value = '';
     }
 
     render() {
@@ -18,10 +56,10 @@ export default class Chat extends React.Component {
                     <div id="users"></div>
                 </div>
                 <div className="chat__main">
-                    <ol id="messages" className="chat__messages"></ol>
+                    <MessageHistory data={this.props.state.roomMessages} />
                     <div className="chat__footer">
                         <div id="typing"></div>
-                        <form id="message-form">
+                        <form id="message-form" onSubmit={this.sendMessage}>
                             <InputField
                                 name='message'
                                 placeHolder='Message'
@@ -36,3 +74,5 @@ export default class Chat extends React.Component {
         )
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

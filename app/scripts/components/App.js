@@ -1,8 +1,9 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Async from 'react-code-splitting'
 
 import Home from './Home'
-import Chat from './Chat'
+const Chat = () => <Async load={import('./Chat')} />
 
 export default class App extends React.Component {
     render() {

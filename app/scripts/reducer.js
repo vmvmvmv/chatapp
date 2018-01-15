@@ -1,3 +1,9 @@
+import { 
+    LOGIN_SUCCESS, 
+    LOGIN_FAIL,
+    ADD_MESSAGE
+} from './actions'
+
 const createReducer = (initial, handlers) => {
     return (state = initial, action) => {
         if (handlers.hasOwnProperty(action.type)) {
@@ -9,7 +15,31 @@ const createReducer = (initial, handlers) => {
 };
 
 const DEFAULT_STATE = {
-    userName: 'J'
+    userName: '',
+    room: '',
+    roomMessages: []
 };
 
-export default createReducer(DEFAULT_STATE, {});
+const setUserParams = (state, action) => {
+    return {
+        ...state,
+        userName: action.payload.name,
+        room: action.payload.room
+    }
+};
+
+const addMessage = (state, action) => {
+    return {
+        ...state,
+        roomMessages: [...state.roomMessages, {
+            from: state.userName,
+            text: action.payload.text,
+            createdAt: action.payload.at
+        }]
+    }
+};
+
+export default createReducer(DEFAULT_STATE, {
+    [LOGIN_SUCCESS]: setUserParams,
+    [ADD_MESSAGE]: addMessage
+});

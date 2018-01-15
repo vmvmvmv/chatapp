@@ -12,7 +12,7 @@ const Config = {
     entry: './app/index.js',
     output: {
         path: path.resolve(__dirname, './public'),
-        filename: 'scripts/bundle.js',
+        filename: 'scripts/bundle-[name].js',
         publicPath: '/'
     },
     module: {
