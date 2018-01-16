@@ -52,6 +52,9 @@ const Config = {
     devServer: {
         historyApiFallback: true,
     },
+    node: {
+        fs: 'empty'
+    },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'chatapp',
@@ -82,14 +85,14 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.optimize.UglifyJsPlugin({
             mangle: true,
             compress: {
-              warnings: false, // Suppress uglification warnings
-              pure_getters: true,
-              unsafe: true,
-              unsafe_comps: true,
-              screw_ie8: true
+                warnings: false, // Suppress uglification warnings
+                pure_getters: true,
+                unsafe: true,
+                unsafe_comps: true,
+                screw_ie8: true
             },
             output: {
-              comments: false,
+                comments: false,
             },
             exclude: [/\.min\.js$/gi] // skip pre-minified libs
         })

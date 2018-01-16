@@ -34,7 +34,7 @@ class Home extends React.Component {
 
     loginUser(e) {
         e.preventDefault();
-        if(!this.params.name && !this.params.room) return alert('need to fill name & room');
+        if(!(this.params.name && this.params.room)) return alert('need to fill name & room');
         this.props.loginUser(this.params);
         this.props.history.push('/chat');
     }

@@ -32,7 +32,7 @@ const addMessage = (state, action) => {
     return {
         ...state,
         roomMessages: [...state.roomMessages, {
-            from: state.userName,
+            from: action.payload.from,
             text: action.payload.text,
             createdAt: action.payload.at
         }]

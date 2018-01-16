@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import io from 'socket.io-client'
 import moment from 'moment'
 
 import InputField from './InputField'
@@ -35,6 +36,28 @@ class Chat extends React.Component {
         if(!this.props.state.userName) return window.location.href = '/';
 
         this.sendMessage = this.sendMessage.bind(this);
+        this.onTyping = this.onTyping.bind(this);
+        
+        this.socket = io('localhost:5000');
+
+        this.socket.on('RECEIVE_MESSAGE', (data) => {
+            console.log(data)
+            this.props.addMsg({from: data.from, text: data.text, at: data.at})
+        });
+
+        this.socket.on('SHOW_TYPING', (data) => {
+            console.log(`${data.user} typing...`)
+        });
+
+        this.socket.emit('JOIN_USER', {
+            name: this.props.state.userName,
+            room: this.props.state.room
+        }, (msg) => {
+            if(msg) {
+                alert(msg);
+                return window.location.href = '/';
+            }
+        });
     }
 
     componentDidMount() {
@@ -44,8 +67,19 @@ class Chat extends React.Component {
     sendMessage(e) {
         e.preventDefault();
         if(!this.msgInput.value) return;
-        this.props.addMsg({text: this.msgInput.value, at: moment().format('kk:mm:ss')})
+
+        this.socket.emit('SEND_MESSAGE', {
+            from: this.props.state.userName,
+            room: this.props.state.room,
+            text: this.msgInput.value,
+            at: moment().format('kk:mm:ss')
+        });
+
         this.msgInput.value = '';
+    }
+
+    onTyping() {
+        this.socket.emit('USER_IS_TYPING', `${this.props.state.userName} is typing...`)
     }
 
     render() {
@@ -64,6 +98,7 @@ class Chat extends React.Component {
                                 name='message'
                                 placeHolder='Message'
                                 rf={(input) => { this.msgInput = input; }}
+                                onChange={this.onTyping}
                             />
                             <button>Send</button>
                         </form>
