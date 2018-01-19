@@ -1,7 +1,9 @@
 import { 
     LOGIN_SUCCESS, 
     LOGIN_FAIL,
-    ADD_MESSAGE
+    ADD_MESSAGE,
+    UPDATE_USER_LIST,
+    UPDATE_ROOM_LIST
 } from './actions'
 
 const createReducer = (initial, handlers) => {
@@ -17,7 +19,9 @@ const createReducer = (initial, handlers) => {
 const DEFAULT_STATE = {
     userName: '',
     room: '',
-    roomMessages: []
+    usersInRoom: [],
+    roomMessages: [],
+    allRooms: []
 };
 
 const setUserParams = (state, action) => {
@@ -34,12 +38,29 @@ const addMessage = (state, action) => {
         roomMessages: [...state.roomMessages, {
             from: action.payload.from,
             text: action.payload.text,
-            createdAt: action.payload.at
+            createdAt: action.payload.at,
+            coords: action.payload.coords ? action.payload.coords : null
         }]
+    }
+};
+
+const updateUserList = (state, action) => {
+    return {
+        ...state,
+        usersInRoom: action.payload
+    }
+};
+
+const updateRoomList = (state, action) => {
+    return {
+        ...state,
+        allRooms: action.payload
     }
 };
 
 export default createReducer(DEFAULT_STATE, {
     [LOGIN_SUCCESS]: setUserParams,
-    [ADD_MESSAGE]: addMessage
+    [ADD_MESSAGE]: addMessage,
+    [UPDATE_USER_LIST]: updateUserList,
+    [UPDATE_ROOM_LIST]: updateRoomList
 });

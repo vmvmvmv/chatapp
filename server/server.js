@@ -29,10 +29,9 @@ app.get('*', function(req, res) {
 });
 
 io.on('connection', (socket) => {
-    socket.emit('getRoomsList', users.users)
+    socket.emit('GET_ROOMS_LIST', users.users)
     socket.on('JOIN_USER', (params, callback) => {
         let usersNames = users.getUserList(params.room);
-        console.log('names: ', usersNames);
 
         if (usersNames.indexOf(params.name) > -1) return callback('The name is already used');
 
@@ -40,7 +39,7 @@ io.on('connection', (socket) => {
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
 
-        // io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+        io.to(params.room).emit('UPDATE_USER_LIST', users.getUserList(params.room));
         socket.emit('RECEIVE_MESSAGE', { from: 'Admin', text: 'Welcome to the chat', at: moment().format('kk:mm:ss') });
         socket.broadcast.to(params.room).emit('RECEIVE_MESSAGE', {
             from: 'Admin',
@@ -57,13 +56,18 @@ io.on('connection', (socket) => {
         }
     });
 
-    // socket.on('createLocationMessage', (coords) => {
-    //     let user = users.getUser(socket.id);
+    socket.on('SEND_LOCATION', (coords) => {
+        let user = users.getUser(socket.id);
 
-    //     if(user) {
-    //         io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lng));
-    //     }
-    // });
+        if(user) {
+            io.to(user.room).emit('RECEIVE_LOCATION', {
+                from: user.name, 
+                lat: coords.lat, 
+                lng: coords.lng, 
+                at: moment().format('kk:mm:ss')
+            });
+        }
+    });
 
     socket.on('USER_IS_TYPING', (text) => {
         let user = users.getUser(socket.id);
@@ -77,7 +81,7 @@ io.on('connection', (socket) => {
         let user = users.removeUser(socket.id);
 
         if(user) {
-            io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+            io.to(user.room).emit('UPDATE_USER_LIST', users.getUserList(user.room));
             io.to(user.room).emit('RECEIVE_MESSAGE', {
                 from: 'Admin',
                 text: `${user.name} has left the room`,
