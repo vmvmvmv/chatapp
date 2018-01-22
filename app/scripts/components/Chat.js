@@ -46,13 +46,11 @@ const UsersInRoom = (props) => {
     return (
         <div id="users">
             <ol>
-                {
-                    props.users.map((usr, index) => {
-                        return (
-                            <li key={index}>{usr}</li>
-                        )
-                    })
-                }
+                {props.users.map((usr, index) => {
+                    return (
+                        <li key={index}>{usr}</li>
+                    )
+                })}
             </ol>
         </div>
     )
@@ -75,6 +73,7 @@ class Chat extends React.Component {
 
         this.socket.on('RECEIVE_MESSAGE', (data) => {
             this.props.addMsg({from: data.from, text: data.text, at: data.at});
+            this.scrollToBottom();
         });
 
         this.socket.on('RECEIVE_LOCATION', (data) => {
@@ -83,7 +82,8 @@ class Chat extends React.Component {
                 text: 'My location',
                 at: data.at,
                 coords: { lat: data.lat, lng: data.lng }
-            })
+            });
+            this.scrollToBottom();
         });
 
         this.socket.on('SHOW_TYPING', (data) => {
@@ -125,7 +125,7 @@ class Chat extends React.Component {
             text: this.msgInput.value,
             at: moment().format('kk:mm:ss')
         });
-
+        
         this.msgInput.value = '';
     };
 
@@ -140,11 +140,17 @@ class Chat extends React.Component {
         }, () => {
             alert('Unable to fetch location');
         });
-    }
+    };
 
     onTyping() {
         this.socket.emit('USER_IS_TYPING', `${this.props.state.userName} is typing...`);
-    }
+    };
+
+    scrollToBottom() {
+        const messages = $('#messages'),
+            scrollTop = messages.prop('scrollHeight');
+        if(messages.prop('clientHeight') < scrollTop) messages.scrollTop(scrollTop);
+    };
 
     render() {
         return (
@@ -171,7 +177,7 @@ class Chat extends React.Component {
                 </div>
             </div>
         )
-    }
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);
