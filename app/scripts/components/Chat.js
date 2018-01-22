@@ -63,7 +63,7 @@ class Chat extends React.Component {
         super(props)
         if(!this.props.state.userName) return window.location.href = '/';
 
-        this.socket = io('localhost:5000');
+        this.socket = io('https://afternoon-basin-50453.herokuapp.com');
         this.sendMessage = this.sendMessage.bind(this);
         this.onTyping = this.onTyping.bind(this);
         this.sendLocation = this.sendLocation.bind(this);

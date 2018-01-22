@@ -29,7 +29,7 @@ class Home extends React.Component {
     constructor(props) {
         super(props)
 
-        this.socket = io('localhost:5000');
+        this.socket = io('https://afternoon-basin-50453.herokuapp.com');
         this.rooms = [];
         this.params = {
             name: '',
