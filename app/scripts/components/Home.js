@@ -36,9 +36,6 @@ class Home extends React.Component {
             room: ''
         };
 
-        this.onChange = this.onChange.bind(this);
-        this.loginUser = this.loginUser.bind(this);
-
         this.socket.on('GET_ROOMS_LIST', (users) => {
             users.forEach((usr) => {
                 if(this.rooms.indexOf(usr.room) < 0) {
@@ -54,11 +51,11 @@ class Home extends React.Component {
         this.nameInput.focus();
     };
 
-    onChange(e) {
+    onChange = (e) => {
         this.params[e.target.name] = e.target.value;
     };
 
-    loginUser(e) {
+    loginUser = (e) => {
         e.preventDefault();
         if(!(this.params.name && this.params.room)) return alert('need to fill name & room');
         this.props.loginUser(this.params);

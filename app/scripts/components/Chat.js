@@ -62,11 +62,7 @@ class Chat extends React.Component {
         if(!this.props.state.userName) return window.location.href = '/';
 
         this.socket = io('https://afternoon-basin-50453.herokuapp.com');
-        this.sendMessage = this.sendMessage.bind(this);
-        this.onTyping = this.onTyping.bind(this);
-        this.sendLocation = this.sendLocation.bind(this);
-        
-
+     
         this.socket.on('UPDATE_USER_LIST', (data) => {
             this.props.updateUserList(data);
         });
@@ -115,7 +111,7 @@ class Chat extends React.Component {
         this.msgInput.focus();
     };
 
-    sendMessage(e) {
+    sendMessage = (e) => {
         e.preventDefault();
         if(!this.msgInput.value) return;
 
@@ -129,7 +125,7 @@ class Chat extends React.Component {
         this.msgInput.value = '';
     };
 
-    sendLocation() {
+    sendLocation = () => {
         if (!navigator.geolocation) return alert('GEO not supported by your browser');
 
         navigator.geolocation.getCurrentPosition((position) => {
@@ -142,11 +138,11 @@ class Chat extends React.Component {
         });
     };
 
-    onTyping() {
+    onTyping = () => {
         this.socket.emit('USER_IS_TYPING', `${this.props.state.userName} is typing...`);
     };
 
-    scrollToBottom() {
+    scrollToBottom = () => {
         const messages = $('#messages'),
             scrollTop = messages.prop('scrollHeight');
         if(messages.prop('clientHeight') < scrollTop) messages.scrollTop(scrollTop);
