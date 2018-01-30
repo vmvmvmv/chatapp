@@ -18,9 +18,9 @@ const mapDispatchToProps = (dispatch) => {
 const MessageHistory = (props) => {
     return (
         <ol id="messages" className="chat__messages">
-            {props.data.map((item, index) => {
+            {props.data.map((item) => {
                 return (
-                    <div key={index}>
+                    <div key={'_' + Math.random().toString(36).substr(2, 9)}>
                         <div className="msg">
                             <div className="user-name">
                                 {item.from} {item.createdAt}
